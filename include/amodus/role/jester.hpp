@@ -1,9 +1,13 @@
 #pragma once
 
-namespace auv
+namespace amodus
 {
-    class jester : player
+    class jester : au::player
     {
+    public:
+        jester(amodus::core& core) : core_{ core } {}
 
+    private:
+        amodus::core core_;
     };
 } // auv
