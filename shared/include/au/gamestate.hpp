@@ -12,6 +12,7 @@ namespace au
     {
     public:
         virtual void on_start_meeting(au::player& reporter/*, au::playerstate& target*/);
+        virtual void on_cast_vote(uint8_t playerId, uint8_t suspectIdx);
 
         au::mod& mod();
         const std::vector<au::player>& players();

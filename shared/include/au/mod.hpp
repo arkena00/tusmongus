@@ -6,6 +6,7 @@
 
 namespace au
 {
+    class core;
     class gamestate;
     class player;
 
@@ -21,6 +22,8 @@ namespace au
             if constexpr (std::is_base_of_v<au::gamestate, T>) register_gamestate(std::make_unique<T>());
             else if constexpr (std::is_base_of_v<au::player, T>) register_player(std::make_unique<T>());
         }
+
+        au::core& core();
     };
 } // au
 

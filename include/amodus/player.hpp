@@ -1,5 +1,6 @@
 #pragma once
 
+#include <au/core.hpp>
 #include <au/player.hpp>
 
 namespace amodus
@@ -7,14 +8,10 @@ namespace amodus
     class player : public au::player
     {
     public:
-        void on_set_name(const std::string& name)
+        void on_die(au::DeathReason reason, bool assignGhostRole) override
         {
-            //if (name == "Arkena") set_color(0xFF0000);
-        }
-
-        void on_begin_play()
-        {
-
+            //mod().core().gamestate().endgame();
+            mod().log("on die {} {}", (int)reason, assignGhostRole);
         }
 
     private:

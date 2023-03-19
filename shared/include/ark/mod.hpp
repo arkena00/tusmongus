@@ -6,6 +6,7 @@
 #include <ark/version.hpp>
 
 #include <vector>
+#include <format>
 
 namespace ark
 {
@@ -35,14 +36,7 @@ namespace ark
         template<class... Ts>
         void log(const std::string& message, Ts&&... ts)
         {
-            ark_trace("[{}] " + message, name(), ts...);
-            core_.log(name_, fmt::format(message, ts...));
-        }
-
-        template<class... Ts>
-        void error(const std::string& message, Ts&&... ts)
-        {
-            core_.error(name_, std::format(message, ts...));
+            log(std::vformat(message, std::make_format_args(ts...)));
         }
 
         virtual void on_enable() {}
@@ -81,14 +75,6 @@ namespace ark
         settings().emplace_back(std::move(ts)...);
     }
 
-    template<class T>
-    T mod::setting(const std::string& name) const
-    {
-        auto setting_it = std::find_if(settings_.begin(), settings_.end(), [&name](auto&& setting){ return setting.name() == name; });
-        if (setting_it != settings_.end()) return setting_it->template get<T>();
-        ark_trace("setting {} not found", name);
-        return T{};
-    }
 } // ark
 
 #endif// INCLUDE_ARKMOD_MOD_HPP_ARKENA_MOD

@@ -12,6 +12,12 @@ namespace amodus
             mod().log("amodus start meeting");
         }
 
+        void on_cast_vote(uint8_t playerId, uint8_t suspectIdx) override
+        {
+            mod().log("on_cast_vote {} voting {}", playerId, suspectIdx);
+        }
+
+
         void on_begin_play()
         {
             //au::remote_call(&player::custom_kill, 0, 1);

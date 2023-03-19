@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(amodus)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 add_library(amodus SHARED source/main.cpp)
 

@@ -23,11 +23,6 @@ namespace au
         void set_player_class(au::mod&, std::unique_ptr<au::player>);
 
         ark::core& ark_core();
-
-    private:
-        ark::core& ark_core_;
-        au::network network_;
-        std::unique_ptr<au::gamestate> gamestate_;
-        std::unique_ptr<au::player> player_;
+        au::gamestate& gamestate();
     };
 } // au
