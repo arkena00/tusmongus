@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <format>
+#include <functional>
 
 namespace ark
 {
@@ -31,6 +32,28 @@ namespace ark
         mod(const mod&) = delete;
         mod& operator=(const mod&) = delete;
 
+        template<class F, class Object>
+        void register_rpc(F&& fn, Object* object)
+        {
+            register_rpc(reinterpret_cast<uintptr_t>(fn), static_cast<void*>(object));
+        }
+        void register_rpc(uintptr_t rid, void* object);
+        template<class F, class Object>
+        void send_rpc(F&& fn, Object* object, std::vector<std::byte> data)
+        {
+            send_rpc(reinterpret_cast<uintptr_t>(fn), static_cast<void*>(object), data);
+        }
+
+        virtual void send_rpc(uintptr_t rid, void* object, std::vector<std::byte> data) {}
+
+        template<class... Ts>
+        void send(uintptr_t rpc_id, void* object, Ts&&...)
+        {
+            std::vector<std::byte> data;
+            // (serialize(data, ts), ...);
+            // send_rpc(rpc_id, object, data);
+        }
+
         void log(const std::string& data);
 
         template<class... Ts>
@@ -38,6 +61,9 @@ namespace ark
         {
             log(std::vformat(message, std::make_format_args(ts...)));
         }
+
+        void debug(int index);
+        virtual void on_debug(std::function<void(int)>);
 
         virtual void on_enable() {}
         virtual void on_disable() {}

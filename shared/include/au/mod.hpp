@@ -8,6 +8,7 @@
 
 namespace au
 {
+    struct PlayerControl;
     class core;
     class gamestate;
     class player;
@@ -16,13 +17,13 @@ namespace au
     {
     public:
         void register_gamestate(std::function<std::unique_ptr<au::gamestate>()> make_gamestate);
-        void register_player(std::function<std::unique_ptr<au::player>()> make_player);
+        void register_player(std::function<std::unique_ptr<au::player>(au::PlayerControl*)> make_player);
 
         template<class T>
         void register_class()
         {
-            if constexpr (std::is_base_of_v<au::gamestate, T>) register_gamestate([]{ return std::make_unique<T>(); });
-            else if constexpr (std::is_base_of_v<au::player, T>) register_player([]{ return std::make_unique<T>(); });
+            if constexpr (std::is_base_of_v<au::gamestate, T>) register_gamestate([this]{ return std::make_unique<T>(*this); });
+            else if constexpr (std::is_base_of_v<au::player, T>) register_player([this](au::PlayerControl* au_player){ return std::make_unique<T>(*this, au_player); });
         }
 
         au::core& core();

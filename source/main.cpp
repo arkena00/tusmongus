@@ -3,6 +3,8 @@
 #include <amodus/gamestate.hpp>
 #include <amodus/player.hpp>
 
+#include <gen/au/PlayerControl.hpp>
+
 int mod_load(au::mod& mod)
 {
     // logging
@@ -26,11 +28,17 @@ int mod_load(au::mod& mod)
     // mod.on_enable([]{ mod.log("on_enable mod"); });
     // mod.on_disable([]{ mod.log("on_disable mod"); });
 
+    // raw hook // mod.hook_before<>
 
-    // raw hook
-    /*mod.register_hook<&au::PlayerControl::SetName>::before([this](auto&&, auto name)
+    /*ark::hook<&au::PlayerControl::Exiled>::before([&mod](auto&&...)
     {
-        // mod.log("test message from mod");
+        mod.log("manual hook OnDie");
+    });
+
+    mod.on_debug([&mod](int index)
+    {
+        mod.log("on_debug {}", index);
+        //mod.send(id, data);
     });*/
 
     return 0;

@@ -49,13 +49,13 @@ struct alignas(4)  PlayerControl
     inline static auto internal_ns = "";
     inline static auto internal_name = "PlayerControl";
 
-    void Die(au::DeathReason reason, bool assignGhostRole); // 0x6cade0
+    void Exiled(); // 0x6CB120
 
 };
 } // au
 
 namespace ark::method_info
 {
-    method_rva(0x6cade0, au::PlayerControl, void, Die, au::DeathReason, bool);
+    method_rva(0x6CB120, au::PlayerControl, void, Exiled);
 
 } // ark::method_info
