@@ -1,9 +1,12 @@
 #include <au/mod.hpp>
 
-#include <amodus/gamestate.hpp>
-#include <amodus/player.hpp>
-
+#include <ark/hook.hpp>
 #include <gen/au/PlayerControl.hpp>
+#include <gen/au/PlayerTask.hpp>
+#include <gen/au/Console.hpp>
+
+#include <tmg/tusmo.hpp>
+#include <tmg/ui.hpp>
 
 int mod_load(au::mod& mod)
 {
@@ -12,34 +15,57 @@ int mod_load(au::mod& mod)
 
     // mod info
     ark::mod_info info;
-    info.name = "Amodus";
-    info.description = "A mod with many roles";
-    info.version = ark::version{ 0, 0, 8 };
+    info.name = "Tusmongus";
+    info.description = "Tasks are replaced by tusmo game";
+    info.version = ark::version{ 0, 1, 0 };
     mod.set_info(std::move(info));
 
     // mod settings
-    mod.add_setting("test_setting", 1);
-
-    // use custom au api classes
-    mod.register_class<amodus::gamestate>();
-    mod.register_class<amodus::player>();
 
     // events
-    // mod.on_enable([]{ mod.log("on_enable mod"); });
+    // mod.on_enable([&mod]{ mod.log("on_enable mod"); });
     // mod.on_disable([]{ mod.log("on_disable mod"); });
 
-    // raw hook // mod.hook_before<>
+    static tmg::tusmo tusmo{ mod };
+    static bool task_complete = false;
 
-    /*ark::hook<&au::PlayerControl::Exiled>::before([&mod](auto&&...)
-    {
-        mod.log("manual hook OnDie");
+
+    mod.on_draw([](auto* imgui_context) {
+                if (tusmo.active())
+                {
+                    tmg::draw_ui(imgui_context, tusmo);
+
+                    if (tusmo.ended())
+                    {
+                        if (tusmo.won())
+                        {
+                            // notify game thread
+                            task_complete = true;
+                        }
+                    }
+                }
+            });
+
+    // drawing renders in another thread, wait events here to run au function from the same thread
+    ark::hook<&au::PlayerControl::FixedUpdate>::after([](auto&& self) {
+        if (task_complete)
+        {
+            ark_trace("task complete {}", tusmo.task()->Idk__BackingField);
+            au::PlayerControl::LocalPlayer()->RpcCompleteTask(tusmo.task()->Idk__BackingField);
+            au::PlayerControl::LocalPlayer()->CompleteTask(tusmo.task()->Idk__BackingField);
+            task_complete = false;
+        }
     });
 
-    mod.on_debug([&mod](int index)
-    {
-        mod.log("on_debug {}", index);
-        //mod.send(id, data);
-    });*/
+    ark::hook<&au::Console::Use>::overwrite([&mod](auto&& o, auto&& self) {
+            // todo check if usable first
+            auto* task = self->FindTask(au::PlayerControl::LocalPlayer());
+            if (task)
+            {
+                ark_trace("begin task {}", task->Idk__BackingField);
+                tusmo.begin(task);
+            }
+        });
 
     return 0;
 }

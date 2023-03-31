@@ -1,19 +1,39 @@
 cmake_minimum_required(VERSION 3.24)
-project(amodus)
+project(tusmongus)
 
-set(CMAKE_CXX_STANDARD 20)
+# imgui
+set(IMGUI_ROOT ${ARKENAMOD_ROOT}/third_party/imgui)
+include(${ARKENAMOD_ROOT}/cmake/imgui.cmake)
 
-if (NOT ARKENAMODS_ROOT)
-    set(ARKENAMODS_ROOT ${PROJECT_SOURCE_DIR}/bin/mods)
-endif()
+file(GLOB_RECURSE AU_GEN_SOURCES
+        ${ARKENAMOD_ROOT}/include/gen/au/PlayerControl.cpp
+        ${ARKENAMOD_ROOT}/include/gen/au/Console.cpp
+        )
 
-add_library(amodus SHARED source/main.cpp)
+add_library(tusmongus SHARED
+        source/main.cpp
+        source/tmg/ui.cpp
+        ${AU_GEN_SOURCES}
+        )
 
-target_link_directories(amodus PUBLIC shared)
-target_link_libraries(amodus PUBLIC ${ARKENAMODS_LIB})
-target_include_directories(amodus PUBLIC include shared/include)
+target_compile_features(tusmongus PUBLIC cxx_std_23)
+target_link_directories(tusmongus PUBLIC ${ARKENAMOD_ROOT}/lib)
+target_link_libraries(tusmongus PUBLIC arkena_mod lib_imgui)
+target_include_directories(tusmongus PUBLIC
+        include
+        ${ARKENAMOD_ROOT}/include
+        ${ARKENAMOD_ROOT}/include/gen
+        )
 
-set_target_properties(amodus PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${ARKENAMODS_ROOT}/"
-    OUTPUT_NAME "amodus"
+set_target_properties(tusmongus PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+    OUTPUT_NAME "tusmongus"
 )
+
+# copy files to the game directory
+if (GAME_ROOT)
+    add_custom_command(TARGET tusmongus POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tusmongus> ${GAME_ROOT}/mods/
+        COMMENT "Copying mod to ${GAME_ROOT}/mods/"
+    )
+endif()
