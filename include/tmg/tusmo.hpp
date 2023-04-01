@@ -16,7 +16,7 @@ namespace tmg
     class tusmo
     {
     public:
-        inline static int max_attemps = 3;
+        inline static int max_attemps = 6;
 
         tusmo(au::mod& mod) : mod_{ mod }
         {
@@ -27,7 +27,7 @@ namespace tmg
 
         void update_input(char key)
         {
-            if (input_.size() > word_.size()) return;
+            if (input_.size() >= word_.size()) return;
             input_ += key;
         }
         void erase()
@@ -56,6 +56,15 @@ namespace tmg
             return y < attempts_.size()
                    && x < attempts_[y].size()
                    && attempts_[y][x] == word_[x];
+        }
+        bool is_attempt_letter_yellow(int x, int y)
+        {
+            if (y < attempts_.size() && x < attempts_[y].size())
+            {
+                auto letter = attempts_[y][x];
+                if (word_.contains(letter) && attempts_[y][x] != word_[x]) return true;
+            }
+            return false;
         }
 
         bool active() const { return active_; }

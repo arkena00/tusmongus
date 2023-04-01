@@ -4,6 +4,7 @@
 #include <gen/au/PlayerControl.hpp>
 #include <gen/au/PlayerTask.hpp>
 #include <gen/au/Console.hpp>
+#include <gen/au/MiniGame.hpp>
 
 #include <tmg/tusmo.hpp>
 #include <tmg/ui.hpp>
@@ -58,13 +59,17 @@ int mod_load(au::mod& mod)
     });
 
     ark::hook<&au::Console::Use>::overwrite([&mod](auto&& o, auto&& self) {
-            // todo check if usable first
             auto* task = self->FindTask(au::PlayerControl::LocalPlayer());
             if (task)
             {
                 ark_trace("begin task {}", task->Idk__BackingField);
                 tusmo.begin(task);
             }
+        });
+
+    // stop move during the tusmo
+    ark::hook<&au::PlayerControl::get_CanMove>::overwrite([&mod](auto&& o, auto&& self) -> bool {
+                return !tusmo.active();
         });
 
     return 0;
