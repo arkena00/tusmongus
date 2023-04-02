@@ -37,3 +37,8 @@ if (GAME_ROOT)
         COMMENT "Copying mod to ${GAME_ROOT}/mods/"
     )
 endif()
+
+add_executable(list_filter
+        list_filter/main.cpp
+        list_filter/main.cpp)
+target_compile_features(list_filter PUBLIC cxx_std_23)
