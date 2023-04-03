@@ -4,33 +4,7 @@
 #include <fstream>
 
 static std::vector<std::string> invalid_chars {
-"A"
-, "B"
-, "C"
-, "D"
-, "E"
-, "F"
-, "G"
-, "H"
-, "I"
-, "J"
-, "K"
-, "L"
-, "M"
-, "N"
-, "O"
-, "P"
-, "Q"
-, "R"
-, "S"
-, "T"
-, "U"
-, "V"
-, "W"
-, "X"
-, "Y"
-, "Z"
-, "-"
+"-"
 , "'"
 , " "
 };
@@ -42,6 +16,11 @@ static std::vector<std::string> invalid_begin_chars {
 , "x"
 , "y"
 , "z"
+};
+
+static std::vector<std::string> invalid_end_sequence {
+"AIENT"
+, "IEZ"
 };
 
 void remove_accent(std::string& input);
@@ -60,7 +39,7 @@ inline void str_replace(std::string& str, const std::string& from, const std::st
 int main()
 {
     std::string line;
-    std::ifstream ifs{ "../data/dirty_list.txt" };
+    std::ifstream ifs{ "../data/base_list.txt" };
     std::ofstream ofs{ "../data/list.txt" };
 
     int min_size = 5;
@@ -74,12 +53,14 @@ int main()
 
         for (const auto& letter : invalid_chars) if (line.contains(letter)) is_valid = false;
         for (const auto& letter : invalid_begin_chars) if (line.starts_with(letter)) is_valid = false;
+        for (const auto& sequence : invalid_end_sequence) if (line.ends_with(sequence)) is_valid = false;
 
         if (is_valid)
         {
             remove_accent(line);
             capitalize(line);
             ofs << "init(" << line << ")" << "\n";
+            //ofs << line << "\n";
         }
     }
     return 0;
