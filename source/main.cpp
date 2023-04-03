@@ -58,13 +58,18 @@ int mod_load(au::mod& mod)
         }
     });
 
-    ark::hook<&au::Console::Use>::overwrite([&mod](auto&& o, auto&& self) {
+    ark::hook<&au::Console::Use>::overwrite([&mod](auto&& original, auto&& self) {
             auto* task = self->FindTask(au::PlayerControl::LocalPlayer());
-            if (task)
+            if (task
+                && task->TaskType != au::TaskTypes::FixComms
+                && task->TaskType != au::TaskTypes::FixLights
+                && task->TaskType != au::TaskTypes::FixShower
+                && task->TaskType != au::TaskTypes::FixWiring)
             {
                 ark_trace("begin task {}", task->Idk__BackingField);
                 tusmo.begin(task);
             }
+            else original(self);
         });
 
     // stop move during the tusmo
