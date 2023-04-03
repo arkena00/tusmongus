@@ -52,7 +52,7 @@ namespace tmg
         {
             for (int x = 0; x < tusmo.word().size(); ++x)
             {
-                ImColor color(80, 80, 220);
+                ImColor color = color::blue;
 
                 posx = p.x + x * cell_width;
                 posy = p.y + y * cell_width;
@@ -60,16 +60,18 @@ namespace tmg
                 // draw cell background
                 draw_list->AddRectFilled(ImVec2(posx + cell_margin, posy + cell_margin), ImVec2(posx + cell_width, posy + cell_width), color, 0.5);
 
-                // todo tusmo.letter_color(x, y); struct letter_state { letter, state(exist, wrong_place, inexistant }
-                if (tusmo.is_attempt_letter_yellow(x, y))
+                if (y < tusmo.attempts().size() && x < tusmo.attempt(y).size())
                 {
-                    color = ImColor(200, 200, 0);
-                    draw_list->AddCircleFilled(ImVec2(posx + (cell_width + cell_margin) / 2, posy + (cell_width + cell_margin) / 2), cell_width / 2 - 2, color);
-                }
-                else
-                {
-                    if (tusmo.is_attempt_letter_red(x, y)) color = ImColor(255, 0, 0);
-                    draw_list->AddRectFilled(ImVec2(posx + cell_margin, posy + cell_margin), ImVec2(posx + cell_width, posy + cell_width), color, 0.5);
+                    auto placement = tusmo.attempt(y).placement(x);
+                    if (placement == letter_placement::wrong)
+                    {
+                        color = color::yellow;
+                        draw_list->AddCircleFilled(ImVec2(posx + (cell_width + cell_margin) / 2, posy + (cell_width + cell_margin) / 2), cell_width / 2 - 2, color);
+                    } else
+                    {
+                        if (placement == letter_placement::good) color = color::red;
+                        draw_list->AddRectFilled(ImVec2(posx + cell_margin, posy + cell_margin), ImVec2(posx + cell_width, posy + cell_width), color, 0.5);
+                    }
                 }
 
                 // current line

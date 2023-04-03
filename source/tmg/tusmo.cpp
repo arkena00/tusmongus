@@ -1,7 +1,6 @@
 #include <tmg/tusmo.hpp>
 
 
-
 namespace tmg
 {
     #define init(Word) #Word ,
