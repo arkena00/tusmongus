@@ -110,4 +110,5 @@ void remove_accent(std::string& input)
     str_replace(input, "ù", "u");
     str_replace(input, "û", "u");
 
+    str_replace(input, "ç", "c");
 }
