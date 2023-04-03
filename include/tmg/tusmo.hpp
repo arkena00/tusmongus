@@ -13,17 +13,17 @@ namespace au
 
 namespace tmg
 {
+    struct word_info
+    {
+
+    };
+
     class tusmo
     {
     public:
         inline static int max_attemps = 6;
 
-        tusmo(au::mod& mod) : mod_{ mod }
-        {
-            words_.emplace_back("CHOUETTE");
-            words_.emplace_back("TEST");
-            words_.emplace_back("POMPOM");
-        }
+        tusmo(au::mod& mod);
 
         void update_input(char key)
         {
@@ -100,14 +100,16 @@ namespace tmg
         {
             std::random_device rd;
             std::mt19937 gen(rd());
-            std::uniform_int_distribution<> word_index(0, words_.size() - 1);
-            word_ = words_[word_index(gen)];
+            std::uniform_int_distribution<> word_index(0, guessable_words.size() - 1);
+            word_ = guessable_words[word_index(gen)];
         }
 
         //
         std::string ui_buffer;
 
     private:
+        static std::vector<std::string> guessable_words;
+
         au::mod& mod_;
 
         bool active_ = false;
@@ -116,7 +118,6 @@ namespace tmg
         std::string input_;
         std::string word_;
         std::vector<std::string> attempts_;
-        std::vector<std::string> words_;
         std::vector<std::string> dicos_;
     };
 } // tmg

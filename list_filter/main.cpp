@@ -31,10 +31,21 @@ static std::vector<std::string> invalid_chars {
 , "Y"
 , "Z"
 , "-"
+, "'"
 , " "
 };
 
+static std::vector<std::string> invalid_begin_chars {
+"k"
+, "u"
+, "w"
+, "x"
+, "y"
+, "z"
+};
+
 void remove_accent(std::string& input);
+void capitalize(std::string& input);
 
 inline void str_replace(std::string& str, const std::string& from, const std::string& to) {
     if(from.empty())
@@ -62,14 +73,24 @@ int main()
         if (line.size() < min_size || line.size() > max_size) continue;
 
         for (const auto& letter : invalid_chars) if (line.contains(letter)) is_valid = false;
+        for (const auto& letter : invalid_begin_chars) if (line.starts_with(letter)) is_valid = false;
 
         if (is_valid)
         {
             remove_accent(line);
-            ofs << line << "\n";
+            capitalize(line);
+            ofs << "init(" << line << ")" << "\n";
         }
     }
     return 0;
+}
+
+void capitalize(std::string& input)
+{
+    for (char& item: input)
+    {
+        item = std::toupper(item);
+    }
 }
 
 void remove_accent(std::string& input)
