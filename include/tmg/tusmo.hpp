@@ -18,9 +18,10 @@ namespace tmg
 {
     namespace color
     {
-        static ImColor blue{80, 80, 220};
-        static ImColor red{220, 0, 0};
-        static ImColor yellow{180, 180, 0};
+        static ImColor blue{8, 76, 97};
+        static ImColor current{80, 120, 150};
+        static ImColor red{219, 58, 52};
+        static ImColor yellow{247, 183, 53};
     }
 
     enum class letter_placement{ none, good, wrong };
@@ -98,6 +99,7 @@ namespace tmg
 
         std::string letter(int i) { return word_.substr(i, 1); }
         std::string input_letter(int i) { return input_.substr(i, 1); }
+        std::string word_letter(int i) { return word_.substr(i, 1); }
         std::string attempt_letter(int x, int y) { return attempts_[y].letter(x); }
 
         bool active() const { return active_; }

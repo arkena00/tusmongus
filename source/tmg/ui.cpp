@@ -10,6 +10,9 @@ namespace tmg
         ImGui::SetCurrentContext(imgui_context);
 
         ImGuiIO& io = ImGui::GetIO();
+        //auto* tusmo_font = io.Fonts->AddFontFromFileTTF("d:\\avenir.otf", 16);
+
+
         ImVec2 window_size;
         ImVec2 window_pos;
         window_size.x = io.DisplaySize.x * 0.75;
@@ -43,16 +46,21 @@ namespace tmg
         float posx = 0;
         float posy = 0;
         ImColor letter_color(255, 255, 255);
-        float letter_padding_x = 6;
-        float letter_padding_y = -2;
         float cell_width = 40;
         float cell_margin = 4;
+        float font_size = 36;
+
+        float letter_padding_x = cell_width - font_size + (cell_margin * 2) + 1;
+        float letter_padding_y = cell_width - font_size;
+
+        std::vector<std::string> preview(10, ".");
 
         for (int y = 0; y < tmg::tusmo::max_attemps; ++y)
         {
             for (int x = 0; x < tusmo.word().size(); ++x)
             {
                 ImColor color = color::blue;
+                if (x == 0 && y <= tusmo.attempts().size()) color = color::red;
 
                 posx = p.x + x * cell_width;
                 posy = p.y + y * cell_width;
@@ -63,14 +71,19 @@ namespace tmg
                 if (y < tusmo.attempts().size() && x < tusmo.attempt(y).size())
                 {
                     auto placement = tusmo.attempt(y).placement(x);
+
                     if (placement == letter_placement::wrong)
                     {
                         color = color::yellow;
                         draw_list->AddCircleFilled(ImVec2(posx + (cell_width + cell_margin) / 2, posy + (cell_width + cell_margin) / 2), cell_width / 2 - 2, color);
                     } else
                     {
-                        if (placement == letter_placement::good) color = color::red;
-                        draw_list->AddRectFilled(ImVec2(posx + cell_margin, posy + cell_margin), ImVec2(posx + cell_width, posy + cell_width), color, 0.5);
+                        if (placement == letter_placement::good)
+                        {
+                            color = color::red;
+                            preview[x] = tusmo.word_letter(x);
+                        }
+                        draw_list->AddRectFilled(ImVec2(posx + cell_margin, posy + cell_margin), ImVec2(posx + cell_width, posy + cell_width), color);
                     }
                 }
 
@@ -79,14 +92,18 @@ namespace tmg
                 {
                     if (x < tusmo.input().size())
                     {
-                        if (x == 0) color = ImColor(255, 0, 0);
-                        draw_list->AddText(nullptr, 48, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.input_letter(x).c_str());
+                        draw_list->AddRectFilled(ImVec2(posx + cell_margin, posy + cell_margin), ImVec2(posx + cell_width, posy + cell_width), color::current);
+                        draw_list->AddText(nullptr, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.input_letter(x).c_str());
+                    }
+                    else
+                    {
+                        draw_list->AddText(nullptr, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, preview[x].c_str());
                     }
                 }
                 // previous attempts
                 else if (y < tusmo.attempts().size())
                 {
-                    draw_list->AddText(nullptr, 48, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.attempt_letter(x, y).c_str());
+                    draw_list->AddText(nullptr, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.attempt_letter(x, y).c_str());
                 }
             }
         }
