@@ -6,25 +6,22 @@
 #include <gen/au/Console.hpp>
 #include <gen/au/MiniGame.hpp>
 #include <gen/au/EndGameManager.hpp>
+#include <gen/au/PlayerPhysics.hpp>
 
 #include <au/ShipStatus.hpp>
 #include <tmg/tusmo.hpp>
 #include <tmg/ui.hpp>
 
-// stop player when start task during moving
 // block input while tusmo
-// task stay visible after complete
+// disable haunting
 
 int mod_load(au::mod& mod)
 {
-    // logging
-    mod.log("test message from mod");
-
     // mod info
     ark::mod_info info;
     info.name = "Tusmongus";
     info.description = "Tasks are replaced by tusmo game";
-    info.version = ark::version{ 0, 3, 0 };
+    info.version = ark::version{ 0, 3, 1 };
     mod.set_info(std::move(info));
 
     // mod settings
@@ -34,6 +31,7 @@ int mod_load(au::mod& mod)
     // mod.on_disable([]{ mod.log("on_disable mod"); });
 
     static tmg::tusmo tusmo{ mod };
+
     static bool task_complete = false;
 
 
@@ -60,6 +58,8 @@ int mod_load(au::mod& mod)
             ark_trace("task complete {}", tusmo.task()->Idk__BackingField);
             au::PlayerControl::LocalPlayer()->RpcCompleteTask(tusmo.task()->Idk__BackingField);
             au::PlayerControl::LocalPlayer()->CompleteTask(tusmo.task()->Idk__BackingField);
+            // bug  all task removed
+            //au::PlayerControl::LocalPlayer()->RemoveTask(tusmo.task());
             task_complete = false;
         }
     });
@@ -67,7 +67,6 @@ int mod_load(au::mod& mod)
     ark::hook<&au::Console::Use>::overwrite([&mod](auto&& original, auto&& self) {
             bool can_use, shoud_use;
             self->CanUse(au::PlayerControl::LocalPlayer()->get_Data(), can_use, shoud_use);
-            ark_trace("can_use {} shoud_use {}", can_use, shoud_use);
             if (!can_use) return original(self);
 
             auto* task = self->FindTask(au::PlayerControl::LocalPlayer());
@@ -78,6 +77,8 @@ int mod_load(au::mod& mod)
                 && task->TaskType != au::TaskTypes::ResetSeismic)
             {
                 ark_trace("begin task {}", task->Idk__BackingField);
+                // stop player movement
+                au::PlayerControl::LocalPlayer()->MyPhysics->SetNormalizedVelocity({});
                 tusmo.begin(task);
             }
             else original(self);

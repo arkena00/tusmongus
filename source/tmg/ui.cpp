@@ -10,8 +10,13 @@ namespace tmg
         ImGui::SetCurrentContext(imgui_context);
 
         ImGuiIO& io = ImGui::GetIO();
-        //auto* tusmo_font = io.Fonts->AddFontFromFileTTF("d:\\avenir.otf", 16);
 
+        static ImFont* tusmo_font = nullptr;
+        /*if (tusmo_font == nullptr)
+        {
+            tusmo_font = io.Fonts->AddFontFromFileTTF("d:\\avenir.ttf", 36);
+            tusmo.font = tusmo_font;
+        }*/
 
         ImVec2 window_size;
         ImVec2 window_pos;
@@ -93,11 +98,11 @@ namespace tmg
                     if (x < tusmo.input().size())
                     {
                         draw_list->AddRectFilled(ImVec2(posx + cell_margin, posy + cell_margin), ImVec2(posx + cell_width, posy + cell_width), color::current);
-                        draw_list->AddText(nullptr, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.input_letter(x).c_str());
+                        draw_list->AddText(tusmo.font, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.input_letter(x).c_str());
                     }
                     else
                     {
-                        draw_list->AddText(nullptr, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, preview[x].c_str());
+                        draw_list->AddText(tusmo.font, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, preview[x].c_str());
                     }
                 }
                 // previous attempts

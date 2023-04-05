@@ -71,6 +71,7 @@ namespace tmg
     {
     public:
         inline static int max_attemps = 6;
+        ImFont* font = nullptr;
 
         tusmo(au::mod& mod);
 
@@ -116,10 +117,22 @@ namespace tmg
             mod_.log("Try {} -- {}", attempt, word_);
             if (attempt == word_) return end(true);
 
+            if (!word_exist(attempt))
+            {
+                input_ = word_[0];
+                return;
+            }
+
             attempts_.emplace_back(attempt, word_);
             if (attempts_.size() >= max_attemps) end();
             input_.clear();
             input_ += word_[0];
+        }
+
+        bool word_exist(const std::string& word)
+        {
+            if (std::find(words_.begin(), words_.end(), word) != words_.end()) return true;
+            return false;
         }
 
         void end(bool has_win = false)
@@ -145,6 +158,7 @@ namespace tmg
 
     private:
         static std::vector<std::string> guessable_words;
+        std::vector<std::string> words_;
 
         au::mod& mod_;
 
@@ -154,6 +168,5 @@ namespace tmg
         std::string input_;
         std::string word_;
         std::vector<tmg::word> attempts_;
-        std::vector<std::string> dicos_;
     };
 } // tmg

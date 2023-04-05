@@ -8,6 +8,7 @@ include(${ARKENAMOD_ROOT}/cmake/imgui.cmake)
 file(GLOB_RECURSE AU_GEN_SOURCES
         ${ARKENAMOD_ROOT}/include/gen/au/PlayerControl.cpp
         ${ARKENAMOD_ROOT}/include/gen/au/Console.cpp
+        ${ARKENAMOD_ROOT}/include/gen/au/PlayerPhysics.cpp
         )
 
 add_library(tusmongus SHARED
@@ -26,6 +27,7 @@ target_include_directories(tusmongus PUBLIC
         ${ARKENAMOD_ROOT}/include/gen
         )
 
+target_compile_options(tusmongus PUBLIC /bigobj)
 set_target_properties(tusmongus PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
     OUTPUT_NAME "tusmongus"

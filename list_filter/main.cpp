@@ -10,12 +10,12 @@ static std::vector<std::string> invalid_chars {
 };
 
 static std::vector<std::string> invalid_begin_chars {
-"k"
-, "u"
-, "w"
-, "x"
-, "y"
-, "z"
+"k", "K"
+, "u", "U"
+, "w", "W"
+, "x", "X"
+, "y", "Y"
+, "z", "Z"
 };
 
 static std::vector<std::string> invalid_end_sequence {
@@ -39,8 +39,8 @@ inline void str_replace(std::string& str, const std::string& from, const std::st
 int main()
 {
     std::string line;
-    std::ifstream ifs{ "../data/base_list.txt" };
-    std::ofstream ofs{ "../data/list.txt" };
+    std::ifstream ifs{ "../data/base_dico.txt" };
+    std::ofstream ofs{ "../data/dico.txt" };
 
     int min_size = 5;
     int max_size = 10;

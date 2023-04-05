@@ -1,5 +1,6 @@
 #include <tmg/tusmo.hpp>
 
+#include <fstream>
 
 namespace tmg
 {
@@ -12,5 +13,13 @@ namespace tmg
 
     tusmo::tusmo(au::mod& mod) : mod_{ mod }
     {
+        std::string line;
+        std::ifstream ifs{ "mods/data" };
+
+        while (std::getline(ifs, line))
+        {
+            words_.emplace_back(line);
+        }
+        ark_trace("loaded existing words : {}", words_.size());
     }
 } // tmg
