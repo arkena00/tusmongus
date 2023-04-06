@@ -7,6 +7,7 @@
 #include <gen/au/MiniGame.hpp>
 #include <gen/au/EndGameManager.hpp>
 #include <gen/au/PlayerPhysics.hpp>
+#include <gen/au/AmongUsClient.hpp>
 
 #include <au/ShipStatus.hpp>
 #include <tmg/tusmo.hpp>
@@ -97,11 +98,12 @@ int mod_load(au::mod& mod)
     ark::hook<&au::PlayerControl::Die>::after([](auto&& self, auto, auto) {
         if (au::PlayerControl::LocalPlayer() == self) tusmo.end();
     });
-
     ark::hook<&au::EndGameManager::Start>::after([](auto&& self) {
         tusmo.end();
     });
-
+    ark::hook<&au::AmongUsClient::ExitGame>::after([](auto&& self, auto) {
+        tusmo.end();
+    });
 
     return 0;
 }
