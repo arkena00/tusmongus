@@ -18,11 +18,6 @@ static std::vector<std::string> invalid_begin_chars {
 , "z", "Z"
 };
 
-static std::vector<std::string> invalid_end_sequence {
-"AIENT"
-, "IEZ"
-};
-
 void remove_accent(std::string& input);
 void capitalize(std::string& input);
 
@@ -39,8 +34,8 @@ inline void str_replace(std::string& str, const std::string& from, const std::st
 int main()
 {
     std::string line;
-    std::ifstream ifs{ "../data/base_dico.txt" };
-    std::ofstream ofs{ "../data/dico.txt" };
+    std::ifstream ifs{ "../data/base_list.txt" };
+    std::ofstream ofs{ "../data/list.txt" };
 
     int min_size = 5;
     int max_size = 10;
@@ -49,11 +44,12 @@ int main()
     {
         bool is_valid = true;
 
-        if (line.size() < min_size || line.size() > max_size) continue;
+        if (line.empty()) continue;
+
+        //if (line.size() < min_size || line.size() > max_size) continue;
 
         for (const auto& letter : invalid_chars) if (line.contains(letter)) is_valid = false;
         for (const auto& letter : invalid_begin_chars) if (line.starts_with(letter)) is_valid = false;
-        for (const auto& sequence : invalid_end_sequence) if (line.ends_with(sequence)) is_valid = false;
 
         if (is_valid)
         {

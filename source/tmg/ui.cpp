@@ -26,7 +26,7 @@ namespace tmg
         window_pos.y = (io.DisplaySize.y - window_size.y) / 2;
         ImGui::SetNextWindowPos(window_pos);
         ImGui::SetNextWindowSize(window_size);
-        ImGui::Begin("TUSMO", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+        ImGui::Begin("##TUSMO", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
         {
