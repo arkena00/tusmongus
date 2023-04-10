@@ -114,7 +114,6 @@ namespace tmg
         {
             if (attempt.size() != word_.size()) return;
 
-            mod_.log("Try {} -- {}", attempt, word_);
             if (attempt == word_) return end(true);
 
             if (!word_exist(attempt))

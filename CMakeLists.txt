@@ -13,8 +13,10 @@ file(GLOB_RECURSE AU_GEN_SOURCES
 
 add_library(tusmongus SHARED
         source/main.cpp
+        source/tmg/mod.cpp
         source/tmg/ui.cpp
         source/tmg/tusmo.cpp
+        source/tmg/font.cpp
         ${AU_GEN_SOURCES}
         )
 

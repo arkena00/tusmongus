@@ -20,6 +20,5 @@ namespace tmg
         {
             words_.emplace_back(line);
         }
-        ark_trace("loaded existing words : {}", words_.size());
     }
 } // tmg

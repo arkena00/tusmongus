@@ -11,13 +11,6 @@ namespace tmg
 
         ImGuiIO& io = ImGui::GetIO();
 
-        static ImFont* tusmo_font = nullptr;
-        /*if (tusmo_font == nullptr)
-        {
-            tusmo_font = io.Fonts->AddFontFromFileTTF("d:\\avenir.ttf", 36);
-            tusmo.font = tusmo_font;
-        }*/
-
         ImVec2 window_size;
         ImVec2 window_pos;
         window_size.x = io.DisplaySize.x * 0.75;
@@ -108,7 +101,7 @@ namespace tmg
                 // previous attempts
                 else if (y < tusmo.attempts().size())
                 {
-                    draw_list->AddText(nullptr, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.attempt_letter(x, y).c_str());
+                    draw_list->AddText(tusmo.font, font_size, ImVec2(posx + letter_padding_x, posy + letter_padding_y), letter_color, tusmo.attempt_letter(x, y).c_str());
                 }
             }
         }
