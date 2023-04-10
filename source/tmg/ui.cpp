@@ -48,6 +48,8 @@ namespace tmg
         float cell_margin = 4;
         float font_size = 36;
 
+        float tusmo_x = window_size.x / 2 - (tusmo.word().size() * cell_width) / 2;
+
         float letter_padding_x = cell_width - font_size + (cell_margin * 2) + 1;
         float letter_padding_y = cell_width - font_size;
 
@@ -60,7 +62,7 @@ namespace tmg
                 ImColor color = color::blue;
                 if (x == 0 && y <= tusmo.attempts().size()) color = color::red;
 
-                posx = p.x + x * cell_width;
+                posx = tusmo_x +  p.x + x * cell_width;
                 posy = p.y + y * cell_width;
 
                 // draw cell background
