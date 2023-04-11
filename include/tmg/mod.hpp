@@ -8,7 +8,7 @@ namespace tmg
     class mod : public au::mod
     {
     public:
-        mod();
+        mod(ark::mod_api&);
 
         //void on_ui_initialize() override;
         void on_enable() override;

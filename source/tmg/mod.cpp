@@ -21,18 +21,25 @@ static bool task_complete = false;
 
 namespace tmg
 {
-    mod::mod() : tusmo_{ *this }
+    mod::mod(ark::mod_api& api)
+        : au::mod(api)
+        , tusmo_{ *this }
     {
         ark::mod_info info;
         info.name = "Tusmongus";
         info.description = "Tasks are replaced by tusmo game";
-        info.version = ark::version{ 0, 3, 4 };
+        info.version = ark::version{ 0, 3, 5 };
+        info.authors.emplace_back("Arkena", "https://github.com/arkena00");
+        info.authors.emplace_back("nico5br", "https://www.twitch.tv/nico5br");
         set_info(std::move(info));
+
+        add_setting("word.max_size", 4, "Choose the max letters for a word");
 
         hook();
 
         // create font
         tusmo_.font = ui_context()->IO.Fonts->AddFontFromMemoryCompressedTTF(font_compressed_data, font_compressed_size, 36);
+        //tusmo_.word_size = setting<int>("word.max_size");
     }
 
     void mod::on_draw()

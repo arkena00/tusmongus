@@ -38,7 +38,7 @@ set_target_properties(tusmongus PROPERTIES
 # copy files to the game directory
 if (GAME_ROOT)
     add_custom_command(TARGET tusmongus POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tusmongus> ${GAME_ROOT}/mods/
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tusmongus> ${GAME_ROOT}/mods/tusmongus/
         COMMENT "Copying mod to ${GAME_ROOT}/mods/"
     )
 endif()

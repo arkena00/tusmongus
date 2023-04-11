@@ -14,7 +14,8 @@ namespace tmg
     tusmo::tusmo(au::mod& mod) : mod_{ mod }
     {
         std::string line;
-        std::ifstream ifs{ "mods/data" };
+        std::ifstream ifs{ mod.root() + "data" };
+        if (!ifs.is_open()) ark_trace("Can't open data at {}", mod.root() + "data");
 
         while (std::getline(ifs, line))
         {
