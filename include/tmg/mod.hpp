@@ -10,9 +10,9 @@ namespace tmg
     public:
         mod(ark::mod_api&);
 
-        //void on_ui_initialize() override;
         void on_enable() override;
         void on_draw() override;
+        void on_settings_update() override;
 
         void hook();
 

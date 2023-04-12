@@ -6,9 +6,22 @@ namespace tmg
 {
     #define init(Word) #Word ,
 
-    std::vector<std::string> tusmo::guessable_words {
-    #include "list.txt"
+    std::vector<std::string> tusmo::words6 {
+    #include "words6.txt"
     };
+    std::vector<std::string> tusmo::words7 {
+    #include "words7.txt"
+    };
+    std::vector<std::string> tusmo::words8 {
+    #include "words8.txt"
+    };
+    std::vector<std::string> tusmo::words9 {
+    #include "words9.txt"
+    };
+    std::vector<std::string> tusmo::words10 {
+    #include "words10.txt"
+    };
+
     #undef init
 
     tusmo::tusmo(au::mod& mod) : mod_{ mod }

@@ -1,3 +1,5 @@
+#include <tmg/ui.hpp>
+
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
 
@@ -108,9 +110,42 @@ namespace tmg
             }
         }
 
+        // draw keyboard
+        posy += 120;
+        float kb_letter_width = 36;
+        float kb_letter_height = 40;
+        std::vector<std::string> kb_letters { "A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P",
+        "Q", "S", "D", "F", "G", "H", "J", "K", "L", "M",
+        "W", "X", "C", "V", "B", "N"};
+        auto keyboard_x = window_pos.x + window_size.x / 2 - 10 * (kb_letter_width + 8 + 2) / 2;
+        posx = keyboard_x;
+
+        for (const auto& kb_letter: kb_letters)
+        {
+            if (kb_letter == "Q" || kb_letter == "W")
+            {
+                posx = keyboard_x;
+                posy += kb_letter_height;
+                if (kb_letter == "W") posx += kb_letter_width * 2.5;
+            }
+            auto color = color::blue;
+            tmg::letter tried_letter = tusmo.tried_letter(kb_letter);
+            if (tried_letter.placement == letter_placement::good) color = color::red;
+            if (tried_letter.placement == letter_placement::wrong) color = color::yellow;
+            if (tried_letter.placement == letter_placement::missing) color = color::blue_dark;
+
+            posx += kb_letter_width;
+            draw_list->AddRectFilled({ posx, posy }, ImVec2(posx + kb_letter_width, posy + kb_letter_width), color, 5.f);
+            draw_list->AddText(tusmo.font, 36,{ posx + 8, posy }, ImColor{ 255, 255, 255 }, kb_letter.c_str());
+            posx += 4;
+        }
+
+
         // Advance the ImGui cursor to claim space in the window (otherwise the window will appear small and needs to be resized)
         //ImGui::Dummy(ImVec2(800, 200));
 
         ImGui::End();
     }
+
+
 } // tmg

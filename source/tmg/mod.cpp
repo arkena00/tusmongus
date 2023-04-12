@@ -28,7 +28,7 @@ namespace tmg
         ark::mod_info info;
         info.name = "Tusmongus";
         info.description = "Tasks are replaced by tusmo game";
-        info.version = ark::version{ 0, 3, 5 };
+        info.version = ark::version{ 0, 3, 6 };
         info.authors.emplace_back("Arkena", "https://github.com/arkena00");
         info.authors.emplace_back("nico5br", "https://www.twitch.tv/nico5br");
         set_info(std::move(info));
@@ -39,7 +39,6 @@ namespace tmg
 
         // create font
         tusmo_.font = ui_context()->IO.Fonts->AddFontFromMemoryCompressedTTF(font_compressed_data, font_compressed_size, 36);
-        //tusmo_.word_size = setting<int>("word.max_size");
     }
 
     void mod::on_draw()
@@ -115,5 +114,10 @@ namespace tmg
         ark::hook<&au::AbilityButton::DoClick>::overwrite([this](auto&& original, auto&& self) {
             if (!tusmo_.active()) original(self);
         });
+    }
+
+    void mod::on_settings_update()
+    {
+        tusmo_.max_word_size = setting<int>("word.max_size");
     }
 } // tmg

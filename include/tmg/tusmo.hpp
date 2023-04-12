@@ -5,6 +5,7 @@
 #include <imgui.h>
 
 #include <array>
+#include <set>
 #include <utility>
 #include <vector>
 #include <random>
@@ -16,15 +17,25 @@ namespace au
 
 namespace tmg
 {
+    enum class letter_placement{ none, missing, good, wrong };
+
+    struct letter
+    {
+        std::string value;
+        letter_placement placement = letter_placement::none;
+    };
+} // tmg
+
+namespace tmg
+{
     namespace color
     {
-        static ImColor blue{8, 76, 97};
-        static ImColor current{80, 120, 150};
-        static ImColor red{219, 58, 52};
-        static ImColor yellow{247, 183, 53};
+        static ImColor blue{ 8, 76, 97 };
+        static ImColor blue_dark{ 28, 36, 67 };
+        static ImColor current{ 80, 120, 150 };
+        static ImColor red{ 219, 58, 52 };
+        static ImColor yellow{ 247, 183, 53 };
     }
-
-    enum class letter_placement{ none, good, wrong };
 
     class word
     {
@@ -92,6 +103,7 @@ namespace tmg
             task_ = task;
             has_won_ = false;
             attempts_.clear();
+            tried_letters_.clear();
             input_.clear();
             select_word();
             input_ += word_[0];
@@ -122,10 +134,31 @@ namespace tmg
                 return;
             }
 
+            for (int i = 0; i < attempt.size(); ++i)
+            {
+                auto placement = letter_placement::missing;
+                if (word_[i] == attempt[i])
+                {
+                    // erase to replace previously wrong placement
+                    placement = letter_placement::good;
+                    tried_letters_.erase(tmg::letter{ std::string{ attempt[i] } });
+                }
+                else if (word_.contains(attempt[i])) placement = letter_placement::wrong;
+                auto letter = std::string(1, attempt[i]);
+                tried_letters_.insert(tmg::letter{ std::string{ attempt[i] }, placement });
+            }
+
             attempts_.emplace_back(attempt, word_);
             if (attempts_.size() >= max_attemps) end();
             input_.clear();
             input_ += word_[0];
+        }
+
+        tmg::letter tried_letter(const std::string& letter)
+        {
+            auto it = std::find_if(tried_letters_.begin(), tried_letters_.end(), [&letter](const auto& tmg_letter) { return tmg_letter.value == letter; });
+            if (it == tried_letters_.end()) return tmg::letter{ letter };
+            return *it;
         }
 
         bool word_exist(const std::string& word)
@@ -148,16 +181,35 @@ namespace tmg
         {
             std::random_device rd;
             std::mt19937 gen(rd());
-            std::uniform_int_distribution<> word_index(0, guessable_words.size() - 1);
-            word_ = guessable_words[word_index(gen)];
+
+            if (max_word_size < 6) max_word_size = 6;
+            if (max_word_size > 10) max_word_size = 10;
+
+            auto* gwords = &words6;
+            std::uniform_int_distribution<> size_index(6, max_word_size);
+            auto index = size_index(gen);
+            if (index == 7) gwords = &words7;
+            if (index == 8) gwords = &words8;
+            if (index == 9) gwords = &words9;
+            if (index == 10) gwords = &words10;
+
+            std::uniform_int_distribution<> gword_index(0, gwords->size() - 1);
+            word_ = (*gwords)[gword_index(gen)];
         }
 
         //
         std::string ui_buffer;
 
+        // settings
+        int max_word_size = 0;
+
     private:
-        static std::vector<std::string> guessable_words;
-        std::vector<std::string> words_;
+        static std::vector<std::string> words6;
+        static std::vector<std::string> words7;
+        static std::vector<std::string> words8;
+        static std::vector<std::string> words9;
+        static std::vector<std::string> words10;
+        std::vector<std::string> words_; // dictionary words
 
         au::mod& mod_;
 
@@ -167,5 +219,8 @@ namespace tmg
         std::string input_;
         std::string word_;
         std::vector<tmg::word> attempts_;
+
+        static inline auto compare_letter = [](auto& lhs, auto& rhs) { return lhs.value < rhs.value; };
+        std::set<tmg::letter, decltype(compare_letter)> tried_letters_{ compare_letter };
     };
 } // tmg
