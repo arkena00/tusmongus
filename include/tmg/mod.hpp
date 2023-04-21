@@ -19,5 +19,6 @@ namespace tmg
     private:
         tmg::tusmo tusmo_;
 
+        float killtimer_reduction_multiplier_ = 1.f;
     };
 } // tmg

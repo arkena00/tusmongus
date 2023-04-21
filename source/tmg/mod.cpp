@@ -28,17 +28,19 @@ namespace tmg
         ark::mod_info info;
         info.name = "Tusmongus";
         info.description = "Tasks are replaced by tusmo game";
-        info.version = ark::version{ 0, 3, 6 };
+        info.version = ark::version{ 0, 3, 7 };
         info.authors.emplace_back("Arkena", "https://github.com/arkena00");
         info.authors.emplace_back("nico5br", "https://www.twitch.tv/nico5br");
         set_info(std::move(info));
 
-        add_setting("word.max_size", 4, "Choose the max letters for a word");
+        add_setting("word.max_size", 6, "Choose the max letters for a word");
+        add_setting("killtimer.reduction_multiplier", 2.f, "Divide the impostor kill timer by this value when he completes a tusmo");
 
         hook();
 
         // create font
         tusmo_.font = ui_context()->IO.Fonts->AddFontFromMemoryCompressedTTF(font_compressed_data, font_compressed_size, 36);
+        ui_context()->IO.KeyRepeatDelay = 3;
     }
 
     void mod::on_draw()
@@ -68,6 +70,8 @@ namespace tmg
             {
                 au::PlayerControl::LocalPlayer()->RpcCompleteTask(tusmo_.task()->Idk__BackingField);
                 au::PlayerControl::LocalPlayer()->CompleteTask(tusmo_.task()->Idk__BackingField);
+                float timer = au::PlayerControl::LocalPlayer()->killTimer / killtimer_reduction_multiplier_;
+                au::PlayerControl::LocalPlayer()->SetKillTimer(timer);
                 task_complete = false;
             }
         });
@@ -75,7 +79,7 @@ namespace tmg
         ark::hook<&au::Console::Use>::overwrite([this](auto&& original, auto&& self) {
                 bool can_use, shoud_use;
                 self->CanUse(au::PlayerControl::LocalPlayer()->get_Data(), can_use, shoud_use);
-                if (!can_use) return original(self);
+                //if (!can_use) return original(self);
 
                 auto* task = self->FindTask(au::PlayerControl::LocalPlayer());
                 if (task
@@ -119,5 +123,6 @@ namespace tmg
     void mod::on_settings_update()
     {
         tusmo_.max_word_size = setting<int>("word.max_size");
+        killtimer_reduction_multiplier_ = setting<float>("killtimer.reduction_multiplier");
     }
 } // tmg
