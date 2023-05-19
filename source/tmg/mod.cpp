@@ -2,6 +2,7 @@
 
 #include <ark/hook.hpp>
 #include <gen/au/PlayerControl.hpp>
+#include <gen/au/GameData_PlayerInfo.hpp>
 #include <gen/au/PlayerTask.hpp>
 #include <gen/au/Console.hpp>
 #include <gen/au/MiniGame.hpp>
@@ -9,6 +10,7 @@
 #include <gen/au/PlayerPhysics.hpp>
 #include <gen/au/AmongUsClient.hpp>
 #include <gen/au/AbilityButton.hpp>
+#include <gen/AmongUs/GameOptions/RoleTypes.hpp>
 
 #include <au/ShipStatus.hpp>
 #include <tmg/tusmo.hpp>
@@ -68,12 +70,19 @@ namespace tmg
         ark::hook<&au::PlayerControl::FixedUpdate>::after([this](auto&& self) {
             if (task_complete)
             {
-                au::PlayerControl::LocalPlayer()->RpcCompleteTask(tusmo_.task()->Idk__BackingField);
-                au::PlayerControl::LocalPlayer()->CompleteTask(tusmo_.task()->Idk__BackingField);
+                au::PlayerControl::LocalPlayer()->RpcCompleteTask(tusmo_.task()->get_Id());
+                au::PlayerControl::LocalPlayer()->CompleteTask(tusmo_.task()->get_Id());
+                au::PlayerControl::LocalPlayer()->RemoveTask(tusmo_.task());
                 float timer = au::PlayerControl::LocalPlayer()->killTimer / killtimer_reduction_multiplier_;
                 au::PlayerControl::LocalPlayer()->SetKillTimer(timer);
                 task_complete = false;
             }
+        });
+
+        ark::hook<&au::Console::CanUse>::overwrite([this](auto&& original, auto&& self, au::GameData_PlayerInfo* pc, bool& canUse, bool& couldUse) -> float {
+            auto role = pc->RoleType;
+            self->AllowImpostor = true;
+            return original(self, pc, canUse, couldUse);
         });
 
         ark::hook<&au::Console::Use>::overwrite([this](auto&& original, auto&& self) {
@@ -82,6 +91,7 @@ namespace tmg
                 //if (!can_use) return original(self);
 
                 auto* task = self->FindTask(au::PlayerControl::LocalPlayer());
+
                 if (task
                     && task->TaskType != au::TaskTypes::FixComms
                     && task->TaskType != au::TaskTypes::FixLights
